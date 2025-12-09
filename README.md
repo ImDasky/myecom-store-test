@@ -83,6 +83,9 @@ A production-ready, single-store ecommerce website template designed for brick-a
       - `passwordHash`: Use a bcrypt hash (you can generate one using an online tool or Node.js)
       - `isAdmin`: `true`
 
+## Deploy note
+- Trigger a fresh deploy after schema changes (e.g., new SEO/map fields) so `npx prisma migrate deploy` runs on production.
+
    Or use this Node.js script:
    ```javascript
    const bcrypt = require('bcryptjs');

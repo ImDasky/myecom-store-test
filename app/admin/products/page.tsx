@@ -24,7 +24,8 @@ export default async function AdminProductsPage() {
         </Link>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
+      {/* Desktop table */}
+      <div className="border rounded-lg overflow-hidden hidden md:block">
         <table className="w-full">
           <thead className="bg-gray-100">
             <tr>
@@ -63,6 +64,37 @@ export default async function AdminProductsPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-4 md:hidden">
+        {products.map((product) => (
+          <div key={product.id} className="border rounded-lg p-4 bg-white">
+            <div className="flex justify-between items-start gap-3">
+              <div>
+                <p className="font-semibold text-black">{product.name}</p>
+                <p className="text-sm text-gray-600 break-all">{product.slug}</p>
+              </div>
+              <span className={`px-2 py-1 rounded text-xs ${
+                product.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              }`}>
+                {product.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-3 text-sm text-black">
+              <span className="font-semibold">{formatPrice(product.basePrice)}</span>
+              <span className="text-gray-600">Variants: {product.variants.length}</span>
+            </div>
+            <div className="mt-4">
+              <Link
+                href={`/admin/products/${product.id}/edit`}
+                className="text-blue-600 hover:underline font-semibold"
+              >
+                Edit
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

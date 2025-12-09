@@ -17,8 +17,14 @@ export function HeaderClient({ settings, user, categories }: HeaderClientProps) 
   const [shrunk, setShrunk] = useState(false)
 
   useEffect(() => {
+    let ticking = false
     const onScroll = () => {
-      setShrunk(window.scrollY > 10)
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        setShrunk(window.scrollY > 10)
+        ticking = false
+      })
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -90,6 +96,7 @@ export function HeaderClient({ settings, user, categories }: HeaderClientProps) 
                 alt={settings.businessName || 'Store'}
                 largeHeight={5}
                 smallHeight={2.75} // smaller when shrunk, good for mobile
+                shrunk={shrunk}
               />
             ) : (
               <h1 

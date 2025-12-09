@@ -7,6 +7,7 @@ interface LogoBrandProps {
   alt: string
   largeHeight?: number // rem units
   smallHeight?: number // rem units
+  shrunk?: boolean
 }
 
 export function LogoBrand({
@@ -14,26 +15,39 @@ export function LogoBrand({
   alt,
   largeHeight = 5, // ~h-20
   smallHeight = 3, // ~h-12
+  shrunk,
 }: LogoBrandProps) {
-  const [shrunk, setShrunk] = useState(false)
+  const [internalShrunk, setInternalShrunk] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => {
-      setShrunk(window.scrollY > 10)
+    if (shrunk === undefined) {
+      const onScroll = () => {
+        setInternalShrunk(window.scrollY > 10)
+      }
+      window.addEventListener('scroll', onScroll, { passive: true })
+      return () => window.removeEventListener('scroll', onScroll)
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [shrunk])
 
-  const heightRem = shrunk ? smallHeight : largeHeight
+  const isShrunk = shrunk !== undefined ? shrunk : internalShrunk
+  const scale = Math.min(1, Math.max(0.4, smallHeight / largeHeight))
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      style={{ height: `${heightRem}rem` }}
-      className="w-auto transition-all duration-300 ease-in-out"
-    />
+    <div
+      style={{ height: `${largeHeight}rem` }}
+      className="flex items-center"
+    >
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          height: `${largeHeight}rem`,
+          transform: `scale(${isShrunk ? scale : 1})`,
+          transformOrigin: 'left center',
+        }}
+        className="w-auto transition-transform duration-300 ease-in-out will-change-transform"
+      />
+    </div>
   )
 }
 

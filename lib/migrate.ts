@@ -67,13 +67,13 @@ export async function ensureMigrations(): Promise<void> {
       `)
     }
 
-    // Read and execute migrations in order
+    // Read and execute migrations in chronological order (by timestamp in name)
     const migrationsDir = join(process.cwd(), 'prisma', 'migrations')
     const migrationFiles = [
-      { name: '20251209024935_init', file: '20251209024935_init/migration.sql' },
-      { name: '20251208203810_add_categories', file: '20251208203810_add_categories/migration.sql' },
-      { name: '20251209120000_add_seo_settings', file: '20251209120000_add_seo_settings/migration.sql' },
-      { name: '20251209121000_add_map_embed', file: '20251209121000_add_map_embed/migration.sql' },
+      { name: '20251208203810_add_categories', file: '20251208203810_add_categories/migration.sql', verifyTable: 'Category' },
+      { name: '20251209024935_init', file: '20251209024935_init/migration.sql', verifyTable: 'StoreSettings' },
+      { name: '20251209120000_add_seo_settings', file: '20251209120000_add_seo_settings/migration.sql', verifyTable: null },
+      { name: '20251209121000_add_map_embed', file: '20251209121000_add_map_embed/migration.sql', verifyTable: null },
     ]
 
     for (const migration of migrationFiles) {
@@ -86,22 +86,22 @@ export async function ensureMigrations(): Promise<void> {
         // If migration is marked as applied, verify the tables actually exist
         // (in case previous migration attempts failed silently)
         if (applied && applied.length > 0) {
-          // For the init migration, check if StoreSettings table exists
-          if (migration.name === '20251209024935_init') {
+          // If this migration has a verification table, check if it exists
+          if (migration.verifyTable) {
             try {
-              await prisma.$executeRawUnsafe(`SELECT 1 FROM "StoreSettings" LIMIT 1`)
-              console.log(`Migration ${migration.name} already applied (tables exist), skipping...`)
+              await prisma.$executeRawUnsafe(`SELECT 1 FROM "${migration.verifyTable}" LIMIT 1`)
+              console.log(`Migration ${migration.name} already applied (${migration.verifyTable} table exists), skipping...`)
               continue
             } catch {
               // Table doesn't exist, so migration wasn't actually applied - re-run it
-              console.log(`Migration ${migration.name} marked as applied but tables missing, re-running...`)
+              console.log(`Migration ${migration.name} marked as applied but ${migration.verifyTable} table missing, re-running...`)
               // Delete the incorrect migration record
               await prisma.$executeRawUnsafe(`
                 DELETE FROM "_prisma_migrations" WHERE migration_name = '${migration.name.replace(/'/g, "''")}'
               `)
             }
           } else {
-            // For other migrations, just trust the tracking (they depend on init)
+            // For migrations without a verification table, just trust the tracking
             console.log(`Migration ${migration.name} already applied, skipping...`)
             continue
           }

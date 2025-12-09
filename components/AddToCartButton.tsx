@@ -70,9 +70,10 @@ export function AddToCartButton({ productId, variantId, disabled, accentColor = 
       <button
         onClick={addToCart}
         disabled={disabled || adding}
-        className="px-6 py-2 rounded font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-6 py-2 rounded font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
         style={{
-          backgroundColor: disabled ? '#ccc' : accentColor,
+          backgroundColor: disabled ? '#9ca3af' : (accentColor || '#2563eb'),
+          border: 'none',
         }}
       >
         {adding ? 'Adding...' : 'Add to Cart'}

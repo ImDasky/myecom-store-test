@@ -149,16 +149,14 @@ export async function Header() {
                         <Link
                           key={category.id}
                           href={`/products?category=${category.slug}`}
-                          className="block px-4 py-2 hover:bg-gray-50 rounded transition-colors"
-                          className="text-black"
+                          className="block px-4 py-2 hover:bg-gray-50 rounded transition-colors text-black"
                         >
                           {category.name}
                         </Link>
                       ))}
                       <Link
                         href="/products"
-                        className="block px-4 py-2 hover:bg-gray-50 rounded transition-colors font-semibold border-t border-gray-200 mt-2 pt-2"
-                        style={{ color: accentColor }}
+                        className="block px-4 py-2 hover:bg-gray-50 rounded transition-colors font-semibold border-t border-gray-200 mt-2 pt-2 text-black"
                       >
                         View All Products
                       </Link>
@@ -170,8 +168,7 @@ export async function Header() {
             {settings.showBlog && (
               <Link 
                 href="/blog" 
-                className="font-medium hover:opacity-70 transition-opacity"
-                        className="text-black"
+                className="font-medium hover:opacity-70 transition-opacity text-black"
               >
                 Resource Hub
               </Link>

@@ -11,6 +11,7 @@
     "netlify-build": "prisma generate && next build"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.19.0",
     "@stripe/stripe-js": "^2.4.0",
     "@types/bcryptjs": "^2.4.6",

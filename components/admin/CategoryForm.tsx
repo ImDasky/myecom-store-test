@@ -117,19 +117,29 @@ export function CategoryForm({ category }: CategoryFormProps) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Icon (Emoji)
+          Icon Name
         </label>
-        <input
-          type="text"
+        <select
           value={formData.icon || ''}
           onChange={(e) =>
             setFormData({ ...formData, icon: e.target.value })
           }
-          placeholder="📦"
           className="w-full px-3 py-2 border border-gray-300 rounded-md"
-        />
+        >
+          <option value="">Default (Cube)</option>
+          <option value="strapping">Strapping</option>
+          <option value="stretch-film">Stretch Film</option>
+          <option value="tape">Tape</option>
+          <option value="packaging">Packaging</option>
+          <option value="gloves">Gloves</option>
+          <option value="safety">Safety</option>
+          <option value="tools">Tools</option>
+          <option value="paint">Paint</option>
+          <option value="electrical">Electrical</option>
+          <option value="chemicals">Chemicals</option>
+        </select>
         <p className="mt-1 text-sm text-gray-500">
-          Single emoji to display for this category
+          Select an icon for this category
         </p>
       </div>
 

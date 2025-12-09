@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 import { AddToCartButton } from '@/components/AddToCartButton'
+import { BuildingOfficeIcon, UserGroupIcon, CubeIcon, TruckIcon } from '@heroicons/react/24/outline'
+import { CategoryIcon } from '@/components/CategoryIcon'
 
 export const dynamic = 'force-dynamic'
 
@@ -108,9 +110,9 @@ export default async function HomePage() {
                   href={`/products?category=${category.slug}`}
                   className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-md transition-shadow"
                 >
-                  {category.icon && (
-                    <div className="text-4xl mb-3">{category.icon}</div>
-                  )}
+                  <div className="flex justify-center mb-3">
+                    <CategoryIcon iconName={category.icon} color={accentColor} />
+                  </div>
                   <h3 className="font-semibold" style={{ color: primaryColor }}>
                     {category.name}
                   </h3>
@@ -136,32 +138,37 @@ export default async function HomePage() {
             {
               title: 'Established Business',
               description: settings.aboutText ? settings.aboutText.substring(0, 100) + '...' : 'With years of experience, we bring expertise to every order.',
-              icon: '🏢',
+              Icon: BuildingOfficeIcon,
             },
             {
               title: 'Product Experts',
               description: 'Have a question? Our Product Experts are here to help!',
-              icon: '👥',
+              Icon: UserGroupIcon,
             },
             {
               title: 'Large Inventory',
               description: 'We stock high quality products ready to ship.',
-              icon: '📦',
+              Icon: CubeIcon,
             },
             {
               title: 'Fast Shipping',
               description: 'Get your products faster with quick shipping.',
-              icon: '🚚',
+              Icon: TruckIcon,
             },
-          ].map((feature, index) => (
-            <div key={index} className="text-center">
-              <div className="text-5xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-2" style={{ color: primaryColor }}>
-                {feature.title}
-              </h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </div>
-          ))}
+          ].map((feature, index) => {
+            const IconComponent = feature.Icon
+            return (
+              <div key={index} className="text-center">
+                <div className="flex justify-center mb-4">
+                  <IconComponent className="w-16 h-16" style={{ color: accentColor }} />
+                </div>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: primaryColor }}>
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </div>
+            )
+          })}
         </div>
       </section>
 

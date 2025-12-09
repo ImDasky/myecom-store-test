@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
+import { AddToCartButton } from '@/components/AddToCartButton'
+import { CategoryIcon } from '@/components/CategoryIcon'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,14 +87,14 @@ export default async function ProductsPage({
               <Link
                 key={category.id}
                 href={`/products?category=${category.slug}`}
-                className={`px-4 py-2 rounded-lg border transition-colors ${
+                className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
                   categorySlug === category.slug
                     ? 'text-white'
                     : 'bg-white hover:bg-gray-50'
                 }`}
                 style={categorySlug === category.slug ? { backgroundColor: accentColor } : { borderColor: primaryColor + '40', color: primaryColor }}
               >
-                {category.icon && <span className="mr-2">{category.icon}</span>}
+                <CategoryIcon iconName={category.icon} className="w-5 h-5" />
                 {category.name}
               </Link>
             ))}
@@ -133,40 +135,44 @@ export default async function ProductsPage({
               : product.basePrice
 
             return (
-              <Link
+              <div
                 key={product.id}
-                href={`/products/${product.slug}`}
                 className="group"
               >
                 <div 
-                  className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                  className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white"
                   style={{ borderColor: primaryColor + '20' }}
                 >
-                  {images[0] && (
-                    <div className="aspect-square relative bg-gray-100">
-                      <img
-                        src={images[0]}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <Link href={`/products/${product.slug}`}>
+                    {images[0] && (
+                      <div className="aspect-square relative bg-gray-100">
+                        <img
+                          src={images[0]}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </Link>
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-2" style={{ color: primaryColor }}>
-                      {product.name}
-                    </h3>
-                    <p className="text-sm opacity-70 mb-2 line-clamp-2" style={{ color: primaryColor }}>
-                      {product.description}
-                    </p>
-                    <p className="font-bold" style={{ color: primaryColor }}>
+                    <Link href={`/products/${product.slug}`}>
+                      <h3 className="font-semibold text-lg mb-2 hover:underline" style={{ color: primaryColor }}>
+                        {product.name}
+                      </h3>
+                      <p className="text-sm opacity-70 mb-2 line-clamp-2" style={{ color: primaryColor }}>
+                        {product.description}
+                      </p>
+                    </Link>
+                    <p className="font-bold mb-3" style={{ color: primaryColor }}>
                       {minPrice === maxPrice 
                         ? formatPrice(minPrice)
                         : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`
                       }
                     </p>
+                    <AddToCartButton productId={product.id} accentColor={accentColor} />
                   </div>
                 </div>
-              </Link>
+              </div>
             )
           })}
         </div>

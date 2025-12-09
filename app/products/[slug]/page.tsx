@@ -60,10 +60,10 @@ export default async function ProductPage({
 
         {/* Product Info */}
         <div>
-          <h1 className="text-4xl font-bold mb-4" style={{ color: primaryColor }}>
+          <h1 className="text-4xl font-bold mb-4 text-black">
             {product.name}
           </h1>
-          <p className="text-2xl font-semibold mb-6" style={{ color: primaryColor }}>
+          <p className="text-2xl font-semibold mb-6 text-black">
             {product.variants.length > 0
               ? `${formatPrice(Math.min(...product.variants.map(v => v.price || product.basePrice)))} - ${formatPrice(Math.max(...product.variants.map(v => v.price || product.basePrice)))}`
               : formatPrice(product.basePrice)
@@ -71,10 +71,10 @@ export default async function ProductPage({
           </p>
           {product.description && (
             <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-2" style={{ color: primaryColor }}>
+              <h2 className="text-xl font-semibold mb-2 text-black">
                 Description
               </h2>
-              <p className="leading-relaxed" style={{ color: primaryColor }}>
+              <p className="leading-relaxed text-black">
                 {product.description}
               </p>
             </div>
@@ -83,7 +83,7 @@ export default async function ProductPage({
           {/* Variants */}
           {product.variants.length > 0 ? (
             <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-4" style={{ color: primaryColor }}>
+              <h2 className="text-xl font-semibold mb-4 text-black">
                 Options
               </h2>
               <div className="space-y-4">
@@ -95,21 +95,21 @@ export default async function ProductPage({
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold" style={{ color: primaryColor }}>
+                        <h3 className="font-semibold text-black">
                           {variant.name}
                         </h3>
                         {variant.sku && (
-                          <p className="text-sm opacity-70" style={{ color: primaryColor }}>
+                          <p className="text-sm opacity-70 text-black">
                             SKU: {variant.sku}
                           </p>
                         )}
                       </div>
-                      <p className="font-bold" style={{ color: primaryColor }}>
+                      <p className="font-bold text-black">
                         {formatPrice(variant.price || product.basePrice)}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <p className="text-sm" style={{ color: primaryColor }}>
+                      <p className="text-sm text-black">
                         Stock: {variant.stock > 0 ? `${variant.stock} available` : 'Out of stock'}
                       </p>
                       <AddToCartButton

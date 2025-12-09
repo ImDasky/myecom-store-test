@@ -45,7 +45,7 @@ export default async function HomePage() {
       {/* Top Selling Products Section */}
       {topProducts.length > 0 && (
         <section className="container mx-auto px-4 py-12">
-          <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: primaryColor }}>
+          <h2 className="text-3xl font-bold mb-8 text-center text-black">
             Top Selling Products
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -80,11 +80,11 @@ export default async function HomePage() {
                   </div>
                   <div className="p-4">
                     <Link href={`/products/${product.slug}`}>
-                      <h3 className="font-semibold mb-2 hover:underline line-clamp-2" style={{ color: primaryColor }}>
+                      <h3 className="font-semibold mb-2 hover:underline line-clamp-2 text-black">
                         {product.name}
                       </h3>
                     </Link>
-                    <p className="font-bold text-lg mb-3" style={{ color: primaryColor }}>
+                    <p className="font-bold text-lg mb-3 text-black">
                       {formatPrice(minPrice)}
                     </p>
                     <AddToCartButton productId={product.id} accentColor={accentColor} />
@@ -100,7 +100,7 @@ export default async function HomePage() {
       {categories.length > 0 && (
         <section className="bg-gray-50 py-12">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: primaryColor }}>
+            <h2 className="text-3xl font-bold mb-8 text-center text-black">
               Shop by Product Group
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
@@ -113,7 +113,7 @@ export default async function HomePage() {
                   <div className="flex justify-center mb-3">
                     <CategoryIcon iconName={category.icon} color={accentColor} />
                   </div>
-                  <h3 className="font-semibold" style={{ color: primaryColor }}>
+                  <h3 className="font-semibold text-black">
                     {category.name}
                   </h3>
                   {category.description && (
@@ -130,7 +130,7 @@ export default async function HomePage() {
 
       {/* Why Choose Us Section */}
       <section className="container mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center" style={{ color: primaryColor }}>
+        <h2 className="text-3xl font-bold mb-8 text-center text-black">
           Why Choose Us
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -162,7 +162,7 @@ export default async function HomePage() {
                 <div className="flex justify-center mb-4">
                   <IconComponent className="w-16 h-16" style={{ color: accentColor }} />
                 </div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: primaryColor }}>
+                <h3 className="text-xl font-semibold mb-2 text-black">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600">{feature.description}</p>
@@ -177,7 +177,7 @@ export default async function HomePage() {
         <section className="bg-gray-50 py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl font-bold mb-6" style={{ color: primaryColor }}>
+              <h2 className="text-3xl font-bold mb-6 text-black">
                 {settings.businessName || 'About Us'}
               </h2>
               <p className="text-lg leading-relaxed text-gray-700">

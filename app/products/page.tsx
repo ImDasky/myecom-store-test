@@ -67,7 +67,7 @@ export default async function ProductsPage({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4" style={{ color: primaryColor }}>
+        <h1 className="text-4xl font-bold mb-4 text-black">
           Products
         </h1>
         {categories.length > 0 && (
@@ -119,7 +119,7 @@ export default async function ProductsPage({
 
       {products.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-lg" style={{ color: primaryColor }}>
+          <p className="text-lg text-black">
             No products found.
           </p>
         </div>
@@ -156,14 +156,14 @@ export default async function ProductsPage({
                   </Link>
                   <div className="p-4">
                     <Link href={`/products/${product.slug}`}>
-                      <h3 className="font-semibold text-lg mb-2 hover:underline" style={{ color: primaryColor }}>
+                      <h3 className="font-semibold text-lg mb-2 hover:underline text-black">
                         {product.name}
                       </h3>
-                      <p className="text-sm opacity-70 mb-2 line-clamp-2" style={{ color: primaryColor }}>
+                      <p className="text-sm opacity-70 mb-2 line-clamp-2 text-black">
                         {product.description}
                       </p>
                     </Link>
-                    <p className="font-bold mb-3" style={{ color: primaryColor }}>
+                    <p className="font-bold mb-3 text-black">
                       {minPrice === maxPrice 
                         ? formatPrice(minPrice)
                         : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`

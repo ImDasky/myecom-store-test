@@ -1,5 +1,6 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import { join } from 'path'
 
 const execAsync = promisify(exec)
 
@@ -32,15 +33,20 @@ export async function ensureMigrations(): Promise<void> {
       process.env.DATABASE_URL = databaseUrl
     }
 
-    // Run migrations
+    // Use the bundled Prisma binary instead of npx (which requires write access)
+    // In Netlify serverless functions, we need to use the binary that's already bundled
+    const prismaPath = join(process.cwd(), 'node_modules', '.bin', 'prisma')
     console.log('Running automatic database migrations...')
-    const cmd = 'npx prisma migrate deploy'
+    
+    // Use the bundled binary directly
+    const cmd = `node "${prismaPath}" migrate deploy`
     await execAsync(cmd, {
       env: {
         ...process.env,
         DATABASE_URL: databaseUrl
       },
-      timeout: 60000 // 60 second timeout
+      timeout: 60000, // 60 second timeout
+      maxBuffer: 10 * 1024 * 1024 // 10MB buffer
     })
     
     console.log('Automatic migrations completed successfully')
@@ -49,6 +55,9 @@ export async function ensureMigrations(): Promise<void> {
     // Don't throw - just log. The app can still work if migrations fail
     // (they might have already been run)
     console.warn('Automatic migration failed (this is OK if migrations were already run):', error.message)
+    if (error.stderr) {
+      console.warn('Migration stderr:', error.stderr.substring(0, 500))
+    }
   } finally {
     migrationRunning = false
   }

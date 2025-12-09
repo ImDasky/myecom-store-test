@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import { join } from 'path'
 
 const execAsync = promisify(exec)
 
@@ -44,13 +45,15 @@ export async function GET(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Use npx to ensure we get the right prisma binary
-    const cmd = 'npx prisma migrate deploy'
+    // Use the bundled Prisma binary instead of npx (which requires write access in serverless)
+    const prismaPath = join(process.cwd(), 'node_modules', '.bin', 'prisma')
+    const cmd = `node "${prismaPath}" migrate deploy`
     const { stdout, stderr } = await execAsync(cmd, {
       env: {
         ...process.env,
         DATABASE_URL: databaseUrl || process.env.DATABASE_URL
-      }
+      },
+      maxBuffer: 10 * 1024 * 1024 // 10MB buffer
     })
     
     return NextResponse.json({

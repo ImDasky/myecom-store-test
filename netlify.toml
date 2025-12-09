@@ -1,5 +1,5 @@
 [build]
-  command = "npx prisma migrate deploy && npm run build"
+  command = "DATABASE_URL=\"$NETLIFY_DATABASE_URL\" npx prisma migrate deploy && npm run build"
   publish = ".next"
 
 [[plugins]]

@@ -93,33 +93,34 @@ export async function ensureMigrations(): Promise<void> {
         const sql = readFileSync(migrationPath, 'utf-8')
         
         // Split SQL into individual statements by semicolon
-        // Remove comment-only lines but keep SQL statements
+        // Then clean each statement by removing comment-only lines
         const rawStatements = sql.split(';')
         const statements: string[] = []
         
         for (const rawStmt of rawStatements) {
-          // Remove lines that are only comments (starting with --)
-          // But keep lines that have SQL even if they also have comments
+          // Remove comment-only lines (lines that start with -- and have no SQL)
           const cleaned = rawStmt
             .split('\n')
             .filter(line => {
               const trimmed = line.trim()
               // Skip empty lines
               if (!trimmed) return false
-              // Skip lines that are ONLY comments (start with -- and nothing else)
-              if (trimmed.startsWith('--') && trimmed.length < 50) {
+              // Skip standalone comment lines (-- followed by text, no SQL)
+              // But keep lines that have SQL keywords
+              if (trimmed.startsWith('--')) {
+                // Check if this comment line is followed by SQL in the same statement
+                // For now, just skip all comment-only lines
                 return false
               }
-              // Keep everything else (SQL statements, even with inline comments)
+              // Keep all non-comment lines
               return true
             })
             .join('\n')
             .trim()
           
-          // Only add if there's actual SQL content
+          // Only add if there's actual SQL content (has SQL keywords)
           if (cleaned && cleaned.length > 0) {
-            // Check if it has any SQL keywords (not just whitespace/comments)
-            const hasSQL = /CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|SELECT|ADD|CONSTRAINT|INDEX|FOREIGN|PRIMARY/i.test(cleaned)
+            const hasSQL = /CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|SELECT|ADD|CONSTRAINT|INDEX|FOREIGN|PRIMARY|UNIQUE/i.test(cleaned)
             if (hasSQL) {
               statements.push(cleaned)
             }

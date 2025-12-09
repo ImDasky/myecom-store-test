@@ -49,6 +49,35 @@ After deploying, check that everything works:
 
 3. **Homepage**: Should load without database errors
 
+## Running Database Migrations
+
+If you see an error like "table does not exist", you need to run migrations:
+
+### Option 1: Via API Endpoint (Easiest)
+
+1. Visit: `https://your-site.netlify.app/api/migrate?secret=migrate-secret`
+   - Or set `MIGRATE_SECRET` environment variable in Netlify and use that value
+   - Default secret is `migrate-secret` if not set
+
+2. The endpoint will automatically:
+   - Use `NETLIFY_DATABASE_URL` if available
+   - Run all pending migrations
+   - Return success/error status
+
+### Option 2: Trigger New Deploy
+
+Migrations should run automatically during build. If they didn't:
+1. Go to Netlify dashboard → **Deploys**
+2. Click **"Trigger deploy"** → **"Clear cache and deploy site"**
+3. Check build logs to verify migrations ran
+
+### Option 3: Run Locally
+
+If you have the database connection string:
+```bash
+DATABASE_URL="your-connection-string" npx prisma migrate deploy
+```
+
 ## Troubleshooting
 
 **Database not connecting?**
@@ -56,6 +85,11 @@ After deploying, check that everything works:
 - Check that the connection shows up in **Site settings** → **Data**
 - Verify in build logs that migrations ran successfully
 - Check `/api/health` endpoint for detailed error messages
+
+**Tables don't exist error?**
+- Run migrations using one of the options above
+- Check `/api/migrate?secret=migrate-secret` to run migrations via API
+- Verify migrations ran in build logs
 
 **Still need to manually set DATABASE_URL?**
 - This should only be needed if you're NOT using Neon integration

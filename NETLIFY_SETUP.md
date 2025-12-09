@@ -99,20 +99,24 @@ If you prefer to use a different database provider or set up Neon manually:
 
 ### Step 7: Run Database Migrations
 
-You have a few options:
+The migrations should run automatically during build, but if you see "table does not exist" errors, run them manually:
 
-**Option A: Use Netlify Functions** (Recommended)
-- Create a function to run migrations
-- Or use a build hook
+**Option A: Via API Endpoint** (Easiest - Recommended)
+1. Visit: `https://your-site.netlify.app/api/migrate?secret=migrate-secret`
+   - The default secret is `migrate-secret` (you can set `MIGRATE_SECRET` env var to change it)
+2. This will automatically use `NETLIFY_DATABASE_URL` if available
+3. Check the response to see if migrations succeeded
 
-**Option B: Run locally pointing to production DB**
+**Option B: Trigger New Deploy**
+1. Go to **Deploys** tab
+2. Click **"Trigger deploy"** → **"Clear cache and deploy site"**
+3. Check build logs to verify migrations ran (look for "Running database migrations...")
+
+**Option C: Run locally pointing to production DB**
 ```bash
 DATABASE_URL="your-production-db-url" npx prisma migrate deploy
 ```
-
-**Option C: Use Prisma Studio or direct SQL**
-- Connect to your production database
-- Run the schema manually
+Or if using Neon integration, get the connection string from Netlify dashboard → Site settings → Data
 
 ### Step 8: Create Admin User
 

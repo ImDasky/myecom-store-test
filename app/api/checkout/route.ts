@@ -147,6 +147,11 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Determine app URL for redirects
+    const host = request.headers.get('host')
+    const proto = request.headers.get('x-forwarded-proto') ?? 'https'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || (host ? `${proto}://${host}` : 'http://localhost:3000')
+
     // Create Stripe Checkout Session
     // Note: Stripe Checkout will collect shipping address from customer
     // The shipping info we collected is stored in the order and will be updated via webhook
@@ -154,8 +159,8 @@ export async function POST(request: NextRequest) {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout`,
+      success_url: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/checkout`,
       customer_email: email,
       shipping_address_collection: {
         allowed_countries: ['US'],

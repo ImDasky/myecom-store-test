@@ -31,7 +31,8 @@ export function HeaderClient({ settings, user, categories }: HeaderClientProps) 
   }, [])
 
   const mainPadding = shrunk ? 'py-0' : 'py-5'
-  const topPadding = shrunk ? 'py-0' : 'py-3'
+  const topPadding = shrunk ? 'py-0.5' : 'py-3'
+  const horizontalPadding = shrunk ? 'px-3' : 'px-4'
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -87,7 +88,7 @@ export function HeaderClient({ settings, user, categories }: HeaderClientProps) 
 
       {/* Main Header */}
       <div className={`bg-black text-white`}>
-        <div className={`container mx-auto px-4 ${mainPadding} transition-all duration-300 ease-in-out`}>
+        <div className={`container mx-auto ${horizontalPadding} ${mainPadding} transition-all duration-300 ease-in-out`}>
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             {settings.logoUrl ? (

@@ -14,10 +14,18 @@ export async function GET(request: NextRequest) {
   const secretParam = searchParams.get('secret')
   const migrateSecret = process.env.MIGRATE_SECRET || 'migrate-secret'
   
-  if (authHeader !== `Bearer ${migrateSecret}` && secretParam !== migrateSecret) {
+  // Check both authorization header and query parameter
+  const isAuthorized = 
+    authHeader === `Bearer ${migrateSecret}` || 
+    secretParam === migrateSecret ||
+    // Allow if no secret is set in env (for easier initial setup)
+    (!process.env.MIGRATE_SECRET && (secretParam === 'migrate-secret' || !secretParam))
+  
+  if (!isAuthorized) {
     return NextResponse.json({ 
       error: 'Unauthorized',
-      hint: 'Add ?secret=YOUR_MIGRATE_SECRET to the URL or use Authorization header'
+      hint: `Add ?secret=${migrateSecret} to the URL (default is 'migrate-secret' if MIGRATE_SECRET env var is not set)`,
+      example: `https://your-site.netlify.app/api/migrate?secret=${migrateSecret}`
     }, { status: 401 })
   }
 

@@ -94,50 +94,44 @@ export async function ensureMigrations(): Promise<void> {
         
         // Split SQL into individual statements
         // PostgreSQL migration files have statements separated by semicolons
-        // We need to split carefully to preserve multi-line statements
-        const statements: string[] = []
-        let currentStatement = ''
-        
-        // Process line by line to handle comments properly
-        const lines = sql.split('\n')
-        for (const line of lines) {
-          const trimmed = line.trim()
-          
-          // Skip empty lines and standalone comment lines
-          if (!trimmed || trimmed.startsWith('--')) {
-            continue
-          }
-          
-          // Add line to current statement
-          currentStatement += line + '\n'
-          
-          // If line ends with semicolon, we have a complete statement
-          if (trimmed.endsWith(';')) {
-            const statement = currentStatement.trim()
-            if (statement && statement.length > 1) { // More than just semicolon
-              statements.push(statement)
-            }
-            currentStatement = ''
-          }
-        }
-        
-        // Add any remaining statement (in case file doesn't end with semicolon)
-        if (currentStatement.trim()) {
-          statements.push(currentStatement.trim())
-        }
+        // We need to split by semicolon but preserve multi-line statements
+        let statements = sql
+          .split(';')
+          .map(s => s.trim())
+          .filter(s => {
+            // Remove empty statements
+            if (!s || s.length === 0) return false
+            // Remove statements that are only comments
+            const lines = s.split('\n').map(l => l.trim()).filter(l => l.length > 0)
+            const hasNonComment = lines.some(l => !l.startsWith('--'))
+            return hasNonComment
+          })
+          .map(s => {
+            // Remove comment-only lines but keep the SQL
+            return s.split('\n')
+              .filter(line => {
+                const trimmed = line.trim()
+                // Keep lines that have SQL (not just comments)
+                return trimmed.length > 0 && (!trimmed.startsWith('--') || trimmed.includes('CREATE') || trimmed.includes('ALTER') || trimmed.includes('DROP'))
+              })
+              .join('\n')
+              .trim()
+          })
+          .filter(s => s.length > 0)
         
         // Execute each statement separately
         console.log(`Applying migration: ${migration.name} (${statements.length} statements)`)
         for (let i = 0; i < statements.length; i++) {
-          const statement = statements[i].trim()
-          if (statement && statement !== ';') {
+          const statement = statements[i]
+          if (statement && statement.length > 0) {
             try {
               await prisma.$executeRawUnsafe(statement)
             } catch (error: any) {
               // If it's an "already exists" error, that's OK - continue
-              if (error.message?.includes('already exists')) {
-                console.log(`Statement ${i + 1} already applied, continuing...`)
+              if (error.message?.includes('already exists') || error.message?.includes('duplicate key')) {
+                console.log(`Statement ${i + 1}/${statements.length} already applied, continuing...`)
               } else {
+                console.warn(`Error in statement ${i + 1}/${statements.length}:`, error.message?.substring(0, 200))
                 throw error
               }
             }

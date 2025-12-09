@@ -5,15 +5,21 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 // Use NETLIFY_DATABASE_URL if DATABASE_URL is not set (for Netlify Neon integration)
-// This ensures Prisma can find the database URL at runtime
-// Must be set before PrismaClient is instantiated
+// When Neon is connected via Netlify integration, NETLIFY_DATABASE_URL is automatically
+// provided at runtime. We need to set DATABASE_URL before PrismaClient is instantiated
+// because Prisma reads DATABASE_URL from process.env during initialization.
 const databaseUrl = process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL
 
 if (databaseUrl && !process.env.DATABASE_URL) {
+  // Set DATABASE_URL so Prisma can use it
   process.env.DATABASE_URL = databaseUrl
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient()
+// Initialize Prisma Client
+// This will use DATABASE_URL from process.env (which we just set above if needed)
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+})
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 

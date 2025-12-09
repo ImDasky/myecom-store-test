@@ -23,17 +23,30 @@ Netlify should auto-detect Next.js, but verify these settings:
 
 Click **"Deploy site"**
 
-### Step 3: Set Environment Variables
+### Step 3: Connect Neon Database (Recommended - Automatic Setup)
+
+**The easiest way to set up your database is using Neon via Netlify integration:**
+
+1. In your Netlify site dashboard, go to **Site settings** → **Data** (or look for "Neon" in the sidebar)
+2. Click **"Add data store"** or **"Connect Neon database"**
+3. Follow the prompts to create or connect a Neon database
+4. Once connected, Netlify automatically provides `NETLIFY_DATABASE_URL` at runtime
+5. **No manual environment variable setup needed!** The code automatically uses `NETLIFY_DATABASE_URL` if `DATABASE_URL` is not set
+
+**✅ That's it!** The database connection will work automatically after the next deploy.
+
+### Step 4: Set Other Environment Variables
 
 After the site is created, go to:
 **Site settings** → **Environment variables** → **Add variable**
 
-Add these variables:
+Add these variables (if not using Neon, you'll also need DATABASE_URL):
 
-1. **DATABASE_URL**
+1. **DATABASE_URL** (Only needed if NOT using Neon integration)
    - For production, use PostgreSQL
    - Example: `postgresql://user:password@host:5432/dbname`
    - You can get this from Supabase, Railway, or Neon
+   - **Skip this if you connected Neon via Netlify integration above**
 
 2. **AUTH_SECRET**
    - Generate a random secret key
@@ -49,44 +62,42 @@ Add these variables:
    - Get this from Stripe Dashboard after setting up webhook
    - Can be added later
 
-### Step 4: Redeploy
+### Step 5: Redeploy
 
-After adding environment variables:
+After connecting Neon (or adding environment variables):
 - Go to **Deploys** tab
 - Click **"Trigger deploy"** → **"Clear cache and deploy site"**
 
-### Step 5: Set Up Database
+The build script will automatically:
+- Use `NETLIFY_DATABASE_URL` for database migrations during build
+- The runtime code will automatically use `NETLIFY_DATABASE_URL` if available
 
-For production, you need PostgreSQL:
+### Step 6: Alternative Database Setup (If Not Using Neon Integration)
 
-**Option A: Supabase (Recommended - Free tier)**
+If you prefer to use a different database provider or set up Neon manually:
+
+**Option A: Supabase (Free tier)**
 1. Go to [supabase.com](https://supabase.com)
 2. Create account and new project
 3. Go to Settings → Database
 4. Copy the connection string
-5. Update `prisma/schema.prisma`:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-6. Commit and push changes
-7. Run migrations (see below)
+5. Add it as `DATABASE_URL` in Netlify environment variables
 
 **Option B: Railway**
 1. Go to [railway.app](https://railway.app)
 2. Create account
 3. New Project → Add PostgreSQL
 4. Copy connection string
+5. Add it as `DATABASE_URL` in Netlify environment variables
 
-**Option C: Neon**
+**Option C: Neon (Manual Setup)**
 1. Go to [neon.tech](https://neon.tech)
 2. Create account
 3. Create database
 4. Copy connection string
+5. Add it as `DATABASE_URL` in Netlify environment variables
 
-### Step 6: Run Database Migrations
+### Step 7: Run Database Migrations
 
 You have a few options:
 
@@ -103,7 +114,7 @@ DATABASE_URL="your-production-db-url" npx prisma migrate deploy
 - Connect to your production database
 - Run the schema manually
 
-### Step 7: Create Admin User
+### Step 8: Create Admin User
 
 After database is set up, create an admin user:
 
@@ -120,7 +131,7 @@ const hash = bcrypt.hashSync('your-password', 10);
 console.log(hash);
 ```
 
-### Step 8: Configure Stripe
+### Step 9: Configure Stripe
 
 1. Log in to your deployed site as admin
 2. Go to **Admin → Settings**
@@ -130,7 +141,7 @@ console.log(hash);
    - **Stripe Publishable Key** (starts with `pk_test_` or `pk_live_`)
 5. Save settings
 
-### Step 9: Set Up Stripe Webhook
+### Step 10: Set Up Stripe Webhook
 
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com)
 2. **Developers** → **Webhooks**
@@ -154,7 +165,14 @@ You can customize the site name in:
 ## Troubleshooting
 
 - **Build fails**: Check build logs in Netlify dashboard
-- **Database errors**: Verify DATABASE_URL is correct
+- **Database errors**: 
+  - If using Neon integration: Verify Neon is connected in **Site settings** → **Data**
+  - If not using Neon: Verify `DATABASE_URL` is set in environment variables
+  - Check `/api/health` endpoint to see database connection status
+- **Database not connecting automatically with Neon**: 
+  - Make sure Neon is connected via Netlify integration (not just manually added)
+  - The `NETLIFY_DATABASE_URL` variable is automatically provided by Netlify
+  - Check build logs to see if migrations ran successfully
 - **Stripe errors**: Check keys are entered in admin settings
 - **Webhook errors**: Verify webhook URL and secret
 

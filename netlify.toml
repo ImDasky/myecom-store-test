@@ -7,10 +7,14 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  # Map Netlify's DATABASE_URL to DATABASE_URL for Prisma
+  # During build, map NETLIFY_DATABASE_URL to DATABASE_URL for Prisma migrations
+  # This is handled by the build script, but we set it here as fallback
   DATABASE_URL = "$NETLIFY_DATABASE_URL"
 
 # Ensure environment variables are available to functions
 [functions]
   node_bundler = "esbuild"
+  
+# Note: NETLIFY_DATABASE_URL is automatically provided by Netlify Neon integration
+# at runtime. The code in lib/db.ts will automatically use it if DATABASE_URL is not set.
 

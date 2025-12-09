@@ -3,14 +3,16 @@ import { prisma } from '@/lib/db'
 
 export async function GET() {
   try {
-    // Check if DATABASE_URL is set
-    const hasDbUrl = !!process.env.DATABASE_URL
+    // Check if DATABASE_URL or NETLIFY_DATABASE_URL is set
+    // NETLIFY_DATABASE_URL is automatically provided when Neon is connected via Netlify
+    const hasDbUrl = !!(process.env.DATABASE_URL || process.env.NETLIFY_DATABASE_URL)
     
     if (!hasDbUrl) {
       return NextResponse.json({
         status: 'error',
-        message: 'DATABASE_URL environment variable is not set',
-        database: 'not configured'
+        message: 'Database URL not found. Neither DATABASE_URL nor NETLIFY_DATABASE_URL is set.',
+        database: 'not configured',
+        hint: 'If using Neon, make sure it is connected via Netlify integration'
       }, { status: 500 })
     }
 

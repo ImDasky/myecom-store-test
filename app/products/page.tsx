@@ -42,8 +42,8 @@ export default async function ProductsPage({
     ...(categoryId && { categoryId }),
     ...(search && {
       OR: [
-        { name: { contains: search } },
-        { description: { contains: search } },
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
       ],
     }),
   }

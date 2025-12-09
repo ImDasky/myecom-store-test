@@ -1,4 +1,5 @@
 import { prisma } from './db'
+import { ensureMigrations } from './migrate'
 
 let settingsCache: any = null
 let cacheTime = 0
@@ -11,6 +12,9 @@ export async function getStoreSettings() {
       return settingsCache
     }
 
+    // Ensure migrations are run automatically on first access
+    await ensureMigrations()
+
     let settings = await prisma.storeSettings.findFirst()
     if (!settings) {
       settings = await prisma.storeSettings.create({
@@ -22,6 +26,29 @@ export async function getStoreSettings() {
     cacheTime = now
     return settings
   } catch (error: any) {
+    // If it's a "table does not exist" error, try running migrations and retry
+    if (error.message?.includes('does not exist') || error.message?.includes('relation') || error.message?.includes('table')) {
+      try {
+        console.log('Tables missing, running automatic migrations...')
+        await ensureMigrations()
+        // Retry after migrations
+        const settings = await prisma.storeSettings.findFirst()
+        if (!settings) {
+          const newSettings = await prisma.storeSettings.create({
+            data: {},
+          })
+          settingsCache = newSettings
+          cacheTime = Date.now()
+          return newSettings
+        }
+        settingsCache = settings
+        cacheTime = Date.now()
+        return settings
+      } catch (retryError: any) {
+        console.error('Error after migration retry:', retryError)
+      }
+    }
+    
     // Return default settings if database is not available
     console.error('Error fetching store settings:', error)
     return {

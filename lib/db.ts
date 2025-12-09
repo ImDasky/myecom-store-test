@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { ensureMigrations } from './migrate'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -22,4 +23,14 @@ export const prisma = globalForPrisma.prisma ?? new PrismaClient({
 })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
+/**
+ * Get Prisma client and ensure migrations are run
+ * This automatically runs migrations on first database access if tables don't exist
+ */
+export async function getPrisma() {
+  // Run migrations automatically if needed (only runs once)
+  await ensureMigrations()
+  return prisma
+}
 

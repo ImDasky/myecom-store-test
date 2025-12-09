@@ -92,9 +92,20 @@ export async function ensureMigrations(): Promise<void> {
         const migrationPath = join(migrationsDir, migration.file)
         const sql = readFileSync(migrationPath, 'utf-8')
         
-        // Execute migration
-        console.log(`Applying migration: ${migration.name}`)
-        await prisma.$executeRawUnsafe(sql)
+        // Split SQL into individual statements (separated by semicolons)
+        // Remove comments and empty lines, then split by semicolon
+        const statements = sql
+          .split(';')
+          .map(s => s.trim())
+          .filter(s => s.length > 0 && !s.startsWith('--'))
+        
+        // Execute each statement separately
+        console.log(`Applying migration: ${migration.name} (${statements.length} statements)`)
+        for (const statement of statements) {
+          if (statement.trim()) {
+            await prisma.$executeRawUnsafe(statement)
+          }
+        }
         
         // Record migration in _prisma_migrations table
         const migrationNameEscaped = migration.name.replace(/'/g, "''")

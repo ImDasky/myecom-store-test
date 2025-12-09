@@ -11,63 +11,64 @@ datasource db {
 }
 
 model StoreSettings {
-  id                        Int      @id @default(autoincrement())
-  businessName              String?
-  logoUrl                   String?
-  primaryColor              String?  @default("#111827")
-  secondaryColor            String?  @default("#f3f4f6")
-  businessEmail             String?
-  businessPhone             String?
-  businessAddress           String?
-  businessCity              String?
-  businessState             String?
-  businessZip               String?
-  businessCountry           String?
-  aboutText                 String?
-  heroHeadline              String?
-  heroSubheadline           String?
-  heroImageUrl              String?
-  openingHours              String?
-  facebookUrl               String?
-  instagramUrl              String?
-  twitterUrl                String?
-  tiktokUrl                 String?
-  stripeSecretKey           String?
-  stripePublishableKey      String?
-  showHomepage              Boolean  @default(true)
-  showProductList           Boolean  @default(true)
-  showSearch                Boolean  @default(true)
-  showAccountArea           Boolean  @default(true)
-  showContactPage           Boolean  @default(true)
-  showLocationPage          Boolean  @default(true)
-  showBlog                  Boolean  @default(true)
-  showFAQ                   Boolean  @default(true)
-  shippingMode              String   @default("flat")
-  flatShippingRateCents     Int      @default(0)
-  flatShippingLabel         String?  @default("Standard Shipping")
-  updatedAt                 DateTime @updatedAt
+  id                    Int      @id @default(autoincrement())
+  businessName          String?
+  logoUrl               String?
+  primaryColor          String?  @default("#111827")
+  secondaryColor        String?  @default("#f3f4f6")
+  businessEmail         String?
+  businessPhone         String?
+  businessAddress       String?
+  businessCity          String?
+  businessState         String?
+  businessZip           String?
+  businessCountry       String?
+  aboutText             String?
+  heroHeadline          String?
+  heroSubheadline       String?
+  heroImageUrl          String?
+  openingHours          String?
+  facebookUrl           String?
+  instagramUrl          String?
+  twitterUrl            String?
+  tiktokUrl             String?
+  stripeSecretKey       String?
+  stripePublishableKey  String?
+  showHomepage          Boolean  @default(true)
+  showProductList       Boolean  @default(true)
+  showSearch            Boolean  @default(true)
+  showAccountArea       Boolean  @default(true)
+  showContactPage       Boolean  @default(true)
+  showLocationPage      Boolean  @default(true)
+  showBlog              Boolean  @default(true)
+  showFAQ               Boolean  @default(true)
+  shippingMode          String   @default("flat")
+  flatShippingRateCents Int      @default(0)
+  flatShippingLabel     String?  @default("Standard Shipping")
+  updatedAt             DateTime @updatedAt
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
   passwordHash String
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  orders    Order[]
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  orders       Order[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
-  slug        String    @unique
+  slug        String      @unique
   description String?
   basePrice   Int
   images      String
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   variants    Variant[]
+  orderItems  OrderItem[]
 }
 
 model Variant {
@@ -82,30 +83,30 @@ model Variant {
 }
 
 model Order {
-  id                  Int         @id @default(autoincrement())
-  userId              Int?
-  user                User?       @relation(fields: [userId], references: [id])
-  email               String
-  totalCents          Int
-  currency            String
-  status              String      @default("pending")
-  stripeSessionId     String      @unique
+  id                    Int         @id @default(autoincrement())
+  userId                Int?
+  user                  User?       @relation(fields: [userId], references: [id])
+  email                 String
+  totalCents            Int
+  currency              String
+  status                String      @default("pending")
+  stripeSessionId       String      @unique
   stripePaymentIntentId String?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
-  items               OrderItem[]
-  shippingName        String?
-  shippingAddress     String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  items                 OrderItem[]
+  shippingName          String?
+  shippingAddress       String?
 }
 
 model OrderItem {
-  id            Int    @id @default(autoincrement())
-  orderId       Int
-  order         Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId     Int
-  product       Product @relation(fields: [productId], references: [id])
-  variantId     Int?
-  quantity      Int
+  id             Int     @id @default(autoincrement())
+  orderId        Int
+  order          Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      Int
+  product        Product @relation(fields: [productId], references: [id])
+  variantId      Int?
+  quantity       Int
   unitPriceCents Int
 }
 
@@ -120,9 +121,8 @@ model BlogPost {
 }
 
 model FAQ {
-  id      Int    @id @default(autoincrement())
+  id       Int    @id @default(autoincrement())
   question String
   answer   String
-  order    Int   @default(0)
+  order    Int    @default(0)
 }
-

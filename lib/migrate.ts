@@ -92,32 +92,28 @@ export async function ensureMigrations(): Promise<void> {
         const migrationPath = join(migrationsDir, migration.file)
         const sql = readFileSync(migrationPath, 'utf-8')
         
-        // Split SQL into individual statements
-        // PostgreSQL migration files have statements separated by semicolons
-        // We need to split by semicolon but preserve multi-line statements
-        let statements = sql
-          .split(';')
-          .map(s => s.trim())
-          .filter(s => {
-            // Remove empty statements
-            if (!s || s.length === 0) return false
-            // Remove statements that are only comments
-            const lines = s.split('\n').map(l => l.trim()).filter(l => l.length > 0)
-            const hasNonComment = lines.some(l => !l.startsWith('--'))
-            return hasNonComment
-          })
-          .map(s => {
-            // Remove comment-only lines but keep the SQL
-            return s.split('\n')
-              .filter(line => {
-                const trimmed = line.trim()
-                // Keep lines that have SQL (not just comments)
-                return trimmed.length > 0 && (!trimmed.startsWith('--') || trimmed.includes('CREATE') || trimmed.includes('ALTER') || trimmed.includes('DROP'))
-              })
-              .join('\n')
-              .trim()
-          })
-          .filter(s => s.length > 0)
+        // Split SQL into individual statements by semicolon
+        // Then clean each statement by removing comment-only lines
+        const rawStatements = sql.split(';')
+        const statements: string[] = []
+        
+        for (const rawStmt of rawStatements) {
+          // Remove comment-only lines but keep SQL lines
+          const cleaned = rawStmt
+            .split('\n')
+            .filter(line => {
+              const trimmed = line.trim()
+              // Keep non-empty lines that aren't standalone comments
+              return trimmed.length > 0 && !trimmed.match(/^--\s*[A-Z]/)
+            })
+            .join('\n')
+            .trim()
+          
+          // Only add if there's actual SQL (not just whitespace/comments)
+          if (cleaned && cleaned.length > 0 && !cleaned.match(/^[\s-]*$/)) {
+            statements.push(cleaned)
+          }
+        }
         
         // Execute each statement separately
         console.log(`Applying migration: ${migration.name} (${statements.length} statements)`)
@@ -128,7 +124,7 @@ export async function ensureMigrations(): Promise<void> {
               await prisma.$executeRawUnsafe(statement)
             } catch (error: any) {
               // If it's an "already exists" error, that's OK - continue
-              if (error.message?.includes('already exists') || error.message?.includes('duplicate key')) {
+              if (error.message?.includes('already exists') || error.message?.includes('duplicate key') || error.message?.includes('relation') && error.message?.includes('already exists')) {
                 console.log(`Statement ${i + 1}/${statements.length} already applied, continuing...`)
               } else {
                 console.warn(`Error in statement ${i + 1}/${statements.length}:`, error.message?.substring(0, 200))

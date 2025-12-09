@@ -67,11 +67,11 @@ export async function ensureMigrations(): Promise<void> {
       `)
     }
 
-    // Read and execute migrations in chronological order (by timestamp in name)
+    // Read and execute migrations in logical order (init first, then additions)
     const migrationsDir = join(process.cwd(), 'prisma', 'migrations')
     const migrationFiles = [
-      { name: '20251208203810_add_categories', file: '20251208203810_add_categories/migration.sql', verifyTable: 'Category' },
       { name: '20251209024935_init', file: '20251209024935_init/migration.sql', verifyTable: 'StoreSettings' },
+      { name: '20251208203810_add_categories', file: '20251208203810_add_categories/migration.sql', verifyTable: 'Category' },
       { name: '20251209120000_add_seo_settings', file: '20251209120000_add_seo_settings/migration.sql', verifyTable: null },
       { name: '20251209121000_add_map_embed', file: '20251209121000_add_map_embed/migration.sql', verifyTable: null },
     ]

@@ -44,18 +44,24 @@ export async function POST(request: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session
 
     try {
+      console.log('[stripe] session.completed', {
+        sessionId: session.id,
+        paymentIntent: session.payment_intent,
+        email: session.customer_details?.email,
+      })
+
       const order = await prisma.order.findUnique({
         where: { stripeSessionId: session.id },
         include: { items: true },
       })
 
       if (!order) {
-        console.error('Order not found for session:', session.id)
-        return NextResponse.json({ received: true })
+        console.error('[stripe] order not found for session', session.id)
+        return ok
       }
 
       if (order.status === 'paid') {
-        return NextResponse.json({ received: true })
+        return ok
       }
 
       // Update order status
@@ -70,6 +76,8 @@ export async function POST(request: NextRequest) {
             : null,
         },
       })
+
+      console.log('[stripe] order updated to paid', { orderId: order.id })
 
       // Decrement stock for each item
       for (const item of order.items) {

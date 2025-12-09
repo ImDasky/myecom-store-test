@@ -36,12 +36,8 @@ export function CategoryIcon({ iconName, className = 'w-12 h-12', color }: Categ
     ? iconMap[iconName.toLowerCase()] 
     : iconMap['default']
 
-  const combinedClassName = color 
-    ? `${className} ${color ? `text-[${color}]` : ''}`
-    : className
-
   return (
-    <div style={color ? { color } : undefined} className="inline-block">
+    <div style={color ? { color } : undefined} className="inline-flex">
       <IconComponent className={className} />
     </div>
   )

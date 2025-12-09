@@ -148,6 +148,13 @@ export async function ensureMigrations(): Promise<void> {
         
         // Execute each statement separately
         console.log(`Applying migration: ${migration.name} (${statements.length} statements)`)
+        
+        if (statements.length === 0) {
+          console.warn(`Migration ${migration.name} has no SQL statements to execute!`)
+          // Don't mark as applied if there are no statements
+          continue
+        }
+        
         for (let i = 0; i < statements.length; i++) {
           const statement = statements[i]
           if (statement && statement.length > 0) {
@@ -165,11 +172,11 @@ export async function ensureMigrations(): Promise<void> {
           }
         }
         
-        // Record migration in _prisma_migrations table
+        // Only record migration in _prisma_migrations table if all statements succeeded
         const migrationNameEscaped = migration.name.replace(/'/g, "''")
         await prisma.$executeRawUnsafe(`
           INSERT INTO "_prisma_migrations" (id, checksum, migration_name, started_at, applied_steps_count, finished_at)
-          VALUES (gen_random_uuid()::text, '', '${migrationNameEscaped}', now(), 1, now())
+          VALUES (gen_random_uuid()::text, '', '${migrationNameEscaped}', now(), ${statements.length}, now())
         `)
         
         console.log(`Migration ${migration.name} applied successfully`)

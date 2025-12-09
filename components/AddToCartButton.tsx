@@ -48,8 +48,7 @@ export function AddToCartButton({ productId, variantId, disabled, accentColor = 
       setAdding(false)
       setQuantity(1)
       
-      // Show feedback
-      alert('Added to cart!')
+      // Show feedback (removed alert popup)
     } catch (error) {
       console.error('Error adding to cart:', error)
       alert('Error adding to cart. Please try again.')

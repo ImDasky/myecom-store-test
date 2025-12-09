@@ -59,8 +59,7 @@ export default async function HomePage() {
                 <div key={product.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow bg-white">
                   <div className="relative">
                     <span 
-                      className="absolute top-2 left-2 text-white px-2 py-1 rounded text-xs font-bold z-10"
-                      style={{ backgroundColor: accentColor }}
+                      className="absolute top-2 left-2 text-black px-2 py-1 rounded text-xs font-bold z-10 bg-white border border-gray-300"
                     >
                       #{index + 1}
                     </span>

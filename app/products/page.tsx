@@ -74,12 +74,11 @@ export default async function ProductsPage({
           <div className="flex flex-wrap gap-2 mb-4">
             <Link
               href="/products"
-              className={`px-4 py-2 rounded-lg border transition-colors ${
+              className={`px-4 py-2 rounded-lg border transition-colors text-black ${
                 !categorySlug
-                  ? 'text-white'
-                  : 'bg-white hover:bg-gray-50'
+                  ? 'bg-gray-200 border-gray-400'
+                  : 'bg-white hover:bg-gray-50 border-gray-300'
               }`}
-              style={!categorySlug ? { backgroundColor: accentColor } : { borderColor: primaryColor + '40', color: primaryColor }}
             >
               All Products
             </Link>
@@ -87,12 +86,11 @@ export default async function ProductsPage({
               <Link
                 key={category.id}
                 href={`/products?category=${category.slug}`}
-                className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 text-black ${
                   categorySlug === category.slug
-                    ? 'text-white'
-                    : 'bg-white hover:bg-gray-50'
+                    ? 'bg-gray-200 border-gray-400'
+                    : 'bg-white hover:bg-gray-50 border-gray-300'
                 }`}
-                style={categorySlug === category.slug ? { backgroundColor: accentColor } : { borderColor: primaryColor + '40', color: primaryColor }}
               >
                 <CategoryIcon iconName={category.icon} className="w-5 h-5" />
                 {category.name}

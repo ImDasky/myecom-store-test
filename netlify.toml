@@ -7,7 +7,6 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  PRISMA_GENERATE_DATAPROXY = "true"
   # Map Netlify's DATABASE_URL to DATABASE_URL for Prisma
   DATABASE_URL = "$NETLIFY_DATABASE_URL"
 

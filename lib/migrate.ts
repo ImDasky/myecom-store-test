@@ -80,8 +80,8 @@ export async function ensureMigrations(): Promise<void> {
       try {
         // Check if migration was already applied
         const applied = await prisma.$queryRawUnsafe<Array<{ id: string }>>(`
-          SELECT id FROM "_prisma_migrations" WHERE migration_name = $1
-        `, migration.name)
+          SELECT id FROM "_prisma_migrations" WHERE migration_name = '${migration.name.replace(/'/g, "''")}'
+        `)
         
         if (applied && applied.length > 0) {
           console.log(`Migration ${migration.name} already applied, skipping...`)
@@ -97,23 +97,25 @@ export async function ensureMigrations(): Promise<void> {
         await prisma.$executeRawUnsafe(sql)
         
         // Record migration in _prisma_migrations table
+        const migrationNameEscaped = migration.name.replace(/'/g, "''")
         await prisma.$executeRawUnsafe(`
           INSERT INTO "_prisma_migrations" (id, checksum, migration_name, started_at, applied_steps_count, finished_at)
-          VALUES (gen_random_uuid()::text, '', $1, now(), 1, now())
-        `, migration.name)
+          VALUES (gen_random_uuid()::text, '', '${migrationNameEscaped}', now(), 1, now())
+        `)
         
         console.log(`Migration ${migration.name} applied successfully`)
       } catch (error: any) {
         // If table already exists error, that's OK - migration was already run
-        if (error.message?.includes('already exists') || error.message?.includes('duplicate')) {
+        if (error.message?.includes('already exists') || error.message?.includes('duplicate') || error.message?.includes('relation') && error.message?.includes('already exists')) {
           console.log(`Migration ${migration.name} appears to already be applied`)
           // Still record it
           try {
+            const migrationNameEscaped = migration.name.replace(/'/g, "''")
             await prisma.$executeRawUnsafe(`
               INSERT INTO "_prisma_migrations" (id, checksum, migration_name, started_at, applied_steps_count, finished_at)
-              VALUES (gen_random_uuid()::text, '', $1, now(), 1, now())
+              VALUES (gen_random_uuid()::text, '', '${migrationNameEscaped}', now(), 1, now())
               ON CONFLICT DO NOTHING
-            `, migration.name)
+            `)
           } catch {
             // Ignore
           }

@@ -36,9 +36,12 @@ export function CategoryIcon({ iconName, className = 'w-12 h-12', color }: Categ
     ? iconMap[iconName.toLowerCase()] 
     : iconMap['default']
 
+  // Default to dark gray/black if no color provided for better visibility
+  const iconColor = color || '#1f2937'
+
   return (
-    <div style={color ? { color } : undefined} className="inline-flex">
-      <IconComponent className={className} />
+    <div style={{ color: iconColor }} className="inline-flex">
+      <IconComponent className={className} strokeWidth={2} />
     </div>
   )
 }

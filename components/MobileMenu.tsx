@@ -137,7 +137,7 @@ export function MobileMenu({ settings, user, categories }: MobileMenuProps) {
                             }`}
                             style={{ transitionDelay: isOpen ? `${0.3 + index * 0.05}s` : '0s' }}
                           >
-                            <CategoryIcon iconName={category.icon} className="w-5 h-5" />
+                            <CategoryIcon iconName={category.icon} color="#111827" className="w-5 h-5" />
                             {category.name}
                           </Link>
                         ))}

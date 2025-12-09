@@ -93,7 +93,7 @@ export default async function ProductsPage({
                     : 'bg-white hover:bg-gray-50 border-gray-300 hover:border-gray-400 hover:shadow-sm'
                 }`}
               >
-                <CategoryIcon iconName={category.icon} className="w-5 h-5" />
+                <CategoryIcon iconName={category.icon} color="#111827" className="w-5 h-5" />
                 {category.name}
               </Link>
             ))}

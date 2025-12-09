@@ -119,7 +119,7 @@ export default async function HomePage() {
                 >
                   <div className="flex justify-center mb-4">
                     <div className="p-3 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors">
-                      <CategoryIcon iconName={category.icon} color={accentColor} className="w-8 h-8" />
+                      <CategoryIcon iconName={category.icon} color="#111827" className="w-8 h-8" />
                     </div>
                   </div>
                   <h3 className="font-semibold text-black text-base mb-2">
@@ -173,7 +173,7 @@ export default async function HomePage() {
               <div key={index} className="text-center p-6 rounded-xl bg-white border border-gray-200 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-center mb-5">
                   <div className="p-4 rounded-full bg-gray-50">
-                    <IconComponent className="w-12 h-12" style={{ color: accentColor }} />
+                    <IconComponent className="w-12 h-12 text-gray-900" strokeWidth={2} />
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-black">

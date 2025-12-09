@@ -12,7 +12,7 @@ interface CartItem {
 
 export async function POST(request: NextRequest) {
   try {
-    const { items, email } = await request.json()
+    const { items, email, shipping } = await request.json()
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
@@ -137,17 +137,32 @@ export async function POST(request: NextRequest) {
     })
 
     // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig: any = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/cart`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout`,
       customer_email: email,
-      shipping_address_collection: {
+    }
+
+    // If shipping info is provided, pre-fill it
+    if (shipping) {
+      sessionConfig.shipping_address_collection = {
         allowed_countries: ['US'],
-      },
-    })
+      }
+      // Pre-fill shipping if provided
+      if (shipping.address) {
+        sessionConfig.shipping_address_collection = undefined
+        sessionConfig.shipping_address = shipping.address
+      }
+    } else {
+      sessionConfig.shipping_address_collection = {
+        allowed_countries: ['US'],
+      }
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig)
 
     // Update order with session ID
     await prisma.order.update({

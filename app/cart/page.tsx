@@ -76,30 +76,8 @@ export default function CartPage() {
     return sum + price * item.quantity
   }, 0)
 
-  const handleCheckout = async () => {
-    const email = prompt('Enter your email address:')
-    if (!email) return
-
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: cart.map(({ product, variant, ...item }) => item),
-          email,
-        }),
-      })
-
-      const data = await response.json()
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        alert('Error starting checkout: ' + (data.error || 'Unknown error'))
-      }
-    } catch (error) {
-      console.error('Checkout error:', error)
-      alert('Error starting checkout')
-    }
+  const handleCheckout = () => {
+    router.push('/checkout')
   }
 
   if (loading) {

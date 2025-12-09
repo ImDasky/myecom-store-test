@@ -92,18 +92,55 @@ export async function ensureMigrations(): Promise<void> {
         const migrationPath = join(migrationsDir, migration.file)
         const sql = readFileSync(migrationPath, 'utf-8')
         
-        // Split SQL into individual statements (separated by semicolons)
-        // Remove comments and empty lines, then split by semicolon
-        const statements = sql
-          .split(';')
-          .map(s => s.trim())
-          .filter(s => s.length > 0 && !s.startsWith('--'))
+        // Split SQL into individual statements
+        // PostgreSQL migration files have statements separated by semicolons
+        // We need to split carefully to preserve multi-line statements
+        const statements: string[] = []
+        let currentStatement = ''
+        
+        // Process line by line to handle comments properly
+        const lines = sql.split('\n')
+        for (const line of lines) {
+          const trimmed = line.trim()
+          
+          // Skip empty lines and standalone comment lines
+          if (!trimmed || trimmed.startsWith('--')) {
+            continue
+          }
+          
+          // Add line to current statement
+          currentStatement += line + '\n'
+          
+          // If line ends with semicolon, we have a complete statement
+          if (trimmed.endsWith(';')) {
+            const statement = currentStatement.trim()
+            if (statement && statement.length > 1) { // More than just semicolon
+              statements.push(statement)
+            }
+            currentStatement = ''
+          }
+        }
+        
+        // Add any remaining statement (in case file doesn't end with semicolon)
+        if (currentStatement.trim()) {
+          statements.push(currentStatement.trim())
+        }
         
         // Execute each statement separately
         console.log(`Applying migration: ${migration.name} (${statements.length} statements)`)
-        for (const statement of statements) {
-          if (statement.trim()) {
-            await prisma.$executeRawUnsafe(statement)
+        for (let i = 0; i < statements.length; i++) {
+          const statement = statements[i].trim()
+          if (statement && statement !== ';') {
+            try {
+              await prisma.$executeRawUnsafe(statement)
+            } catch (error: any) {
+              // If it's an "already exists" error, that's OK - continue
+              if (error.message?.includes('already exists')) {
+                console.log(`Statement ${i + 1} already applied, continuing...`)
+              } else {
+                throw error
+              }
+            }
           }
         }
         

@@ -83,9 +83,28 @@ export async function ensureMigrations(): Promise<void> {
           SELECT id FROM "_prisma_migrations" WHERE migration_name = '${migration.name.replace(/'/g, "''")}'
         `)
         
+        // If migration is marked as applied, verify the tables actually exist
+        // (in case previous migration attempts failed silently)
         if (applied && applied.length > 0) {
-          console.log(`Migration ${migration.name} already applied, skipping...`)
-          continue
+          // For the init migration, check if StoreSettings table exists
+          if (migration.name === '20251209024935_init') {
+            try {
+              await prisma.$executeRawUnsafe(`SELECT 1 FROM "StoreSettings" LIMIT 1`)
+              console.log(`Migration ${migration.name} already applied (tables exist), skipping...`)
+              continue
+            } catch {
+              // Table doesn't exist, so migration wasn't actually applied - re-run it
+              console.log(`Migration ${migration.name} marked as applied but tables missing, re-running...`)
+              // Delete the incorrect migration record
+              await prisma.$executeRawUnsafe(`
+                DELETE FROM "_prisma_migrations" WHERE migration_name = '${migration.name.replace(/'/g, "''")}'
+              `)
+            }
+          } else {
+            // For other migrations, just trust the tracking (they depend on init)
+            console.log(`Migration ${migration.name} already applied, skipping...`)
+            continue
+          }
         }
 
         // Read migration SQL file

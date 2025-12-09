@@ -13,7 +13,7 @@ export async function Header() {
   const accentColor = settings.secondaryColor || '#2563eb'
 
   // Get active categories for navigation (gracefully handle if table doesn't exist yet)
-  let categories = []
+  let categories: Array<{ id: number; name: string; slug: string }> = []
   try {
     categories = await prisma.category.findMany({
       where: { isActive: true },

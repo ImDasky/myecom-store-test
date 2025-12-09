@@ -5,7 +5,7 @@ import { prisma } from '@/lib/db'
 export async function Footer() {
   const settings = await getStoreSettings()
   // Get categories (gracefully handle if table doesn't exist yet)
-  let categories = []
+  let categories: Array<{ id: number; name: string; slug: string }> = []
   try {
     categories = await prisma.category.findMany({
       where: { isActive: true },

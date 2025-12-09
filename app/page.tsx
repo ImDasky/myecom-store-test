@@ -23,7 +23,7 @@ export default async function HomePage() {
   })
 
   // Get active categories (gracefully handle if table doesn't exist yet)
-  let categories = []
+  let categories: Array<{ id: number; name: string; slug: string; description: string | null; icon: string | null; order: number; isActive: boolean }> = []
   try {
     categories = await prisma.category.findMany({
       where: { isActive: true },

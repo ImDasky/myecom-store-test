@@ -14,7 +14,7 @@ export function LogoBrand({
   src,
   alt,
   largeHeight = 5, // ~h-20
-  smallHeight = 2.4, // smaller for tight mobile shrink
+  smallHeight = 2.0, // smaller for tight mobile shrink
   shrunk,
 }: LogoBrandProps) {
   const [internalShrunk, setInternalShrunk] = useState(false)

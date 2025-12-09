@@ -31,8 +31,8 @@ export function HeaderClient({ settings, user, categories }: HeaderClientProps) 
   }, [])
 
   const mainPadding = shrunk ? 'py-0' : 'py-5'
-  const topPadding = shrunk ? 'py-0.5' : 'py-3'
-  const horizontalPadding = shrunk ? 'px-3' : 'px-4'
+  const topPadding = shrunk ? 'py-0' : 'py-3'
+  const horizontalPadding = shrunk ? 'px-2' : 'px-4'
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">

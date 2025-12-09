@@ -100,6 +100,10 @@ For production, you'll need a PostgreSQL database. Options:
    - Select events: `checkout.session.completed`, `checkout.session.async_payment_failed`
    - Copy webhook secret to environment variable
 
+5. **After schema changes (e.g., new SEO/map fields)**:
+   - Ensure a new deploy runs `npx prisma migrate deploy` (your Netlify build script does this)
+   - If needed, trigger a fresh deploy so migrations apply to production DB
+
 ## Troubleshooting
 
 - **Build fails**: Check that all dependencies are in `package.json`

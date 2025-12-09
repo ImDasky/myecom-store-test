@@ -4,6 +4,7 @@ import { getCurrentUser, requireAdmin } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
+import { ChangePasswordForm } from '@/components/account/ChangePasswordForm'
 
 export default async function AccountPage() {
   const settings = await getStoreSettings()
@@ -93,6 +94,10 @@ export default async function AccountPage() {
           <div className="border rounded-lg p-4 space-y-2">
             <p><strong>Email:</strong> {user.email}</p>
             <p><strong>Member since:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+          </div>
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-3">Change Password</h3>
+            <ChangePasswordForm />
           </div>
           <form action="/account/logout" method="POST" className="mt-4">
             <button

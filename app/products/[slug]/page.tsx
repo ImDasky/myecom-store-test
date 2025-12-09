@@ -40,7 +40,7 @@ export default async function ProductPage({
             </div>
           ) : (
             <div className="aspect-square rounded-lg flex items-center justify-center bg-gray-100">
-              <span style={{ color: primaryColor }}>No Image</span>
+              <span className="text-black">No Image</span>
             </div>
           )}
           {images.length > 1 && (

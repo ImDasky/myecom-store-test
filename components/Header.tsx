@@ -36,7 +36,7 @@ export async function Header() {
                 <a 
                   href={`tel:${settings.businessPhone}`}
                   className="font-semibold hover:opacity-70 transition-opacity"
-                  style={{ color: primaryColor }}
+                  className="text-black"
                 >
                   {settings.businessPhone}
                 </a>
@@ -51,7 +51,7 @@ export async function Header() {
                     <Link 
                       href="/account" 
                       className="hover:opacity-70 transition-opacity font-medium"
-                      style={{ color: primaryColor }}
+                      className="text-black"
                     >
                       My Account
                     </Link>
@@ -60,7 +60,7 @@ export async function Header() {
                       <Link 
                         href="/auth/login" 
                         className="hover:opacity-70 transition-opacity"
-                        style={{ color: primaryColor }}
+                        className="text-black"
                       >
                         Sign In
                       </Link>
@@ -68,7 +68,7 @@ export async function Header() {
                       <Link 
                         href="/auth/register" 
                         className="hover:opacity-70 transition-opacity"
-                        style={{ color: primaryColor }}
+                        className="text-black"
                       >
                         Register
                       </Link>
@@ -94,7 +94,7 @@ export async function Header() {
             ) : (
               <h1 
                 className="text-3xl font-bold"
-                style={{ color: primaryColor }}
+                        className="text-black"
               >
                 {settings.businessName || 'My Store'}
               </h1>
@@ -107,7 +107,7 @@ export async function Header() {
               <Link 
                 href="/location" 
                 className="font-medium hover:opacity-70 transition-opacity"
-                style={{ color: primaryColor }}
+                        className="text-black"
               >
                 Locations
               </Link>
@@ -116,7 +116,7 @@ export async function Header() {
               <Link 
                 href="/contact" 
                 className="font-medium hover:opacity-70 transition-opacity"
-                style={{ color: primaryColor }}
+                        className="text-black"
               >
                 Contact Us
               </Link>
@@ -125,7 +125,7 @@ export async function Header() {
               <Link 
                 href="/" 
                 className="font-medium hover:opacity-70 transition-opacity"
-                style={{ color: primaryColor }}
+                        className="text-black"
               >
                 About Us
               </Link>
@@ -135,7 +135,7 @@ export async function Header() {
                 <Link 
                   href="/products" 
                   className="font-medium hover:opacity-70 transition-opacity flex items-center gap-1"
-                  style={{ color: primaryColor }}
+                  className="text-black"
                 >
                   Products
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,7 +150,7 @@ export async function Header() {
                           key={category.id}
                           href={`/products?category=${category.slug}`}
                           className="block px-4 py-2 hover:bg-gray-50 rounded transition-colors"
-                          style={{ color: primaryColor }}
+                          className="text-black"
                         >
                           {category.name}
                         </Link>
@@ -171,7 +171,7 @@ export async function Header() {
               <Link 
                 href="/blog" 
                 className="font-medium hover:opacity-70 transition-opacity"
-                style={{ color: primaryColor }}
+                        className="text-black"
               >
                 Resource Hub
               </Link>
@@ -180,7 +180,7 @@ export async function Header() {
               <Link 
                 href="/admin" 
                 className="font-medium hover:opacity-70 transition-opacity"
-                style={{ color: primaryColor }}
+                        className="text-black"
               >
                 Admin
               </Link>

@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import { formatPrice } from '@/lib/utils'
+import { OrderStatusActions } from '@/components/admin/OrderStatusActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +46,7 @@ export default async function AdminOrderDetailPage({
                 {order.status}
               </p>
             </div>
+            <OrderStatusActions orderId={order.id} currentStatus={order.status} />
             <div>
               <p className="font-semibold">Email</p>
               <p>{order.email}</p>

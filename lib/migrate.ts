@@ -93,25 +93,36 @@ export async function ensureMigrations(): Promise<void> {
         const sql = readFileSync(migrationPath, 'utf-8')
         
         // Split SQL into individual statements by semicolon
-        // Then clean each statement by removing comment-only lines
+        // Remove comment-only lines but keep SQL statements
         const rawStatements = sql.split(';')
         const statements: string[] = []
         
         for (const rawStmt of rawStatements) {
-          // Remove comment-only lines but keep SQL lines
+          // Remove lines that are only comments (starting with --)
+          // But keep lines that have SQL even if they also have comments
           const cleaned = rawStmt
             .split('\n')
             .filter(line => {
               const trimmed = line.trim()
-              // Keep non-empty lines that aren't standalone comments
-              return trimmed.length > 0 && !trimmed.match(/^--\s*[A-Z]/)
+              // Skip empty lines
+              if (!trimmed) return false
+              // Skip lines that are ONLY comments (start with -- and nothing else)
+              if (trimmed.startsWith('--') && trimmed.length < 50) {
+                return false
+              }
+              // Keep everything else (SQL statements, even with inline comments)
+              return true
             })
             .join('\n')
             .trim()
           
-          // Only add if there's actual SQL (not just whitespace/comments)
-          if (cleaned && cleaned.length > 0 && !cleaned.match(/^[\s-]*$/)) {
-            statements.push(cleaned)
+          // Only add if there's actual SQL content
+          if (cleaned && cleaned.length > 0) {
+            // Check if it has any SQL keywords (not just whitespace/comments)
+            const hasSQL = /CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|SELECT|ADD|CONSTRAINT|INDEX|FOREIGN|PRIMARY/i.test(cleaned)
+            if (hasSQL) {
+              statements.push(cleaned)
+            }
           }
         }
         
@@ -124,7 +135,7 @@ export async function ensureMigrations(): Promise<void> {
               await prisma.$executeRawUnsafe(statement)
             } catch (error: any) {
               // If it's an "already exists" error, that's OK - continue
-              if (error.message?.includes('already exists') || error.message?.includes('duplicate key') || error.message?.includes('relation') && error.message?.includes('already exists')) {
+              if (error.message?.includes('already exists') || error.message?.includes('duplicate key') || (error.message?.includes('relation') && error.message?.includes('already exists'))) {
                 console.log(`Statement ${i + 1}/${statements.length} already applied, continuing...`)
               } else {
                 console.warn(`Error in statement ${i + 1}/${statements.length}:`, error.message?.substring(0, 200))
